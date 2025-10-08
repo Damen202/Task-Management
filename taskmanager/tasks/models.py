@@ -2,10 +2,10 @@ from django.db import models
 from users.models import CustomUser
 
 
-class Tasks(models.Model):
+class Task(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    status = models.BooleanField(default=False)  # True = complete
+    status = models.BooleanField(default=False) # False = Pending, True = Completed
     due_date = models.DateField(null=True, blank=True)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tasks')
 
