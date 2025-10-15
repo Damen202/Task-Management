@@ -33,7 +33,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'fallback-key')
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Render will provide your domain automatically
-ALLOWED_HOSTS = ['your-app-name.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
+
+
 
 # Application definition
 
