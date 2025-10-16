@@ -1,9 +1,10 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Task
 from .serializers import TaskSerializer
+from django.shortcuts import get_object_or_404
 
 class TaskListCreateView(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
@@ -27,15 +28,28 @@ class TaskListCreateView(generics.ListCreateAPIView):
 
 class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return Task.objects.filter(owner=self.request.user)
 
+    def update(self, request, *args, **kwargs):
+        task = self.get_object()
+        if task.status:
+            return Response(
+                {"error": "Completed tasks cannot be edited unless reverted to incomplete."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return super().update(request, *args, **kwargs)
+    
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def complete_task(request, pk):
-    task = Task.objects.get(pk=pk, owner=request.user)
-    task.status = not task.status 
+    try:
+        task = Task.objects.get(pk=pk, owner=request.user)
+    except Task.DoesNotExist:
+        return Response({'error': 'Task not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    task.status = not task.status
     task.save()
     return Response(TaskSerializer(task).data)

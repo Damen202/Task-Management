@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer, ProfileSerializer
+from django.contrib.auth import get_user_model
 
 
 @api_view(['POST'])
@@ -24,10 +25,16 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-    username = request.data.get('username')
+    email = request.data.get('email')
     password = request.data.get('password')
+    # Authenticate using email
+    User = get_user_model()
+    try:
+        user_obj = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    user = authenticate(username=username, password=password)
+    user = authenticate(username=user_obj.username, password=password)
     if user:
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -35,12 +42,13 @@ def login(request):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         })
-    return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    return Response({'message': 'Logout successful (client should delete tokens)'})
 
-class RegisterView(generics.CreateAPIView):
-    serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer

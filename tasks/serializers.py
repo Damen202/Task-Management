@@ -1,3 +1,4 @@
+from urllib import request
 from rest_framework import serializers
 from .models import Task
 from users.serializers import ProfileSerializer 
@@ -11,8 +12,11 @@ class TaskSerializer(serializers.ModelSerializer):
         read_only_fields = ['owner', 'created_at', 'updated_at']
 
     def create(self, validated_data):
-        validated_data['owner'] = self.context['request'].user
+        request = self.context.get('request', None)
+        if request and hasattr(request, 'user'):
+            validated_data['owner'] = request.user
         return super().create(validated_data)
+
 
     def validate_due_date(self, value):
         from datetime import date

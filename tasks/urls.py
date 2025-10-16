@@ -3,6 +3,6 @@ from .views import TaskListCreateView, TaskRetrieveUpdateDestroyView, complete_t
 
 urlpatterns = [
     path('', TaskListCreateView.as_view(), name='task-list-create'),
-    path('<int:id>/', TaskRetrieveUpdateDestroyView.as_view(), name='task-detail'),
-    path('<int:id>/complete/', complete_task, name='complete-task'),
+    path('<int:pk>/', TaskRetrieveUpdateDestroyView.as_view(), name='task-detail'),
+    path('<int:pk>/complete/', complete_task, name='complete-task'),
 ]

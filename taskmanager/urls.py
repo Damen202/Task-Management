@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/tasks/', include('tasks.urls')),
-    path('', lambda request: HttpResponse("🚀 Task Manager API is running successfully!")),
-    path('api/', include('tasks.urls')), 
+    path('', lambda request: HttpResponse("🚀 Welcome to Task Manager API")),
 ]
+
