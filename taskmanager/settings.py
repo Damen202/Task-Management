@@ -31,6 +31,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'fallback-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+DEBUG = False  # Ensure debug is off for production
 
 # Render will provide your domain automatically
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
