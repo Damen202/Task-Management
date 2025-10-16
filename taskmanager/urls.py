@@ -26,6 +26,6 @@ router.register(r'tasks', TaskViewSet, basename='tasks')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/register/', RegisterView.as_view(), name='register'),
-    path('api/', include(router.urls)),  # DRF browsable API at /api/
+    path('api/', include(router.urls)), 
 ]
 
