@@ -3,9 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from .serializers import RegisterSerializer, ProfileSerializer
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -24,13 +23,12 @@ def register(request):
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
-    # Authenticate using email
-    User = get_user_model()
     try:
         user_obj = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -46,9 +44,11 @@ def login(request):
         })
     return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout(request):
+    # Optional: blacklist refresh token if using token blacklist
     return Response({'message': 'Logout successful (client should delete tokens)'})
 
 

@@ -14,13 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls')),  # notice 'users', not 'user'
+    path('api/users/', include('users.urls')),
     path('api/tasks/', include('tasks.urls')),
     path('', lambda request: HttpResponse("🚀 Welcome to Task Manager API")),
 ]

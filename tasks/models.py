@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from users.models import CustomUser
+from django.core.exceptions import ValidationError
 
 
 class Task(models.Model):
@@ -28,8 +29,14 @@ class Task(models.Model):
             self.completed_at = None
         super().save(*args, **kwargs)
 
+    def clean(self):
+        if self.due_date and self.due_date < timezone.now().date():
+            raise ValidationError("Due date cannot be in the past.")
+
     def __str__(self):
         return self.title
 
     class Meta:
         ordering = ['-created_at']
+        verbose_name = "Task"
+        verbose_name_plural = "Tasks"
