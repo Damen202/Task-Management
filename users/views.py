@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer, ProfileSerializer
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer

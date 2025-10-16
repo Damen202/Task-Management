@@ -16,16 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from tasks.views import TaskViewSet
-from users.views import RegisterView
-
-router = routers.DefaultRouter()
-router.register(r'tasks', TaskViewSet, basename='tasks')
+from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/users/register/', RegisterView.as_view(), name='register'),
-    path('api/', include(router.urls)), 
+    path('api/users/', include('users.urls')),  # notice 'users', not 'user'
+    path('api/tasks/', include('tasks.urls')),
+    path('', lambda request: HttpResponse("🚀 Welcome to Task Manager API")),
 ]
+
+
 

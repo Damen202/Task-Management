@@ -9,32 +9,33 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+"""
+Django settings for taskmanager project.
+"""
+
 import os
 from pathlib import Path
 from datetime import timedelta
-
 from dotenv import load_dotenv
-import dj_database_url
 
 # Load environment variables
 load_dotenv()
 
-
+# ---------------------------
 # BASE DIRECTORY
-
+# ---------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+# ---------------------------
 # SECURITY
-
+# ---------------------------
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'fallback-dev-secret-key')
-
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-
+# ---------------------------
 # APPLICATION DEFINITION
-
+# ---------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,7 +53,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # for static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,21 +80,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taskmanager.wsgi.application'
 
-
-
-# DATABASE (POSTGRESQL ON RENDER)
-
+# ---------------------------
+# DATABASE (LOCAL SQLITE)
+# ---------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600,
-        ssl_require=True  
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
+# ---------------------------
 # PASSWORD VALIDATION
-
-
+# ---------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -102,31 +100,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
+# ---------------------------
 # INTERNATIONALIZATION
-LANGUAGE_CODE = 'en-us' \
-''
+# ---------------------------
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # ---------------------------
 # STATIC FILES
-
-
+# ---------------------------
 STATIC_URL = '/static/'
-
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise compression and caching
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-# REST FRAMEWORK SETTINGS
-
-
+# ---------------------------
+# REST FRAMEWORK
+# ---------------------------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -136,23 +126,12 @@ REST_FRAMEWORK = {
     ],
 }
 
-
+# ---------------------------
 # SIMPLE JWT SETTINGS
-
-
+# ---------------------------
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-
-# SECURITY SETTINGS FOR PRODUCTION
-
-if not DEBUG:
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
 
