@@ -1,15 +1,38 @@
 from rest_framework import serializers
-from .models import Task
-from users.serializers import ProfileSerializer
+from .models import Task, Category
+from django.contrib.auth import get_user_model
 from datetime import date
 
+User = get_user_model()
+
+class UserSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','username','email')
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+
 class TaskSerializer(serializers.ModelSerializer):
-    owner = ProfileSerializer(read_only=True)
+    owner = UserSimpleSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        source='category',
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'priority', 'status', 'due_date', 'owner', 'created_at', 'updated_at']
-        read_only_fields = ['owner', 'created_at', 'updated_at']
+        fields = [
+            'id', 'title', 'description', 'status', 'priority',
+            'due_date', 'category', 'category_id', 'owner',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ('id', 'owner', 'created_at', 'updated_at')
 
     def create(self, validated_data):
         request = self.context.get('request', None)
@@ -21,9 +44,3 @@ class TaskSerializer(serializers.ModelSerializer):
         if value and value < date.today():
             raise serializers.ValidationError("Due date cannot be in the past.")
         return value
-
-    def validate(self, attrs):
-        due_date = attrs.get('due_date', getattr(self.instance, 'due_date', None))
-        if due_date and due_date < date.today():
-            raise serializers.ValidationError({"due_date": "Due date cannot be in the past."})
-        return attrs
