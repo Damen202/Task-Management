@@ -2,8 +2,8 @@ from rest_framework import generics, status, permissions, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import Task
-from .serializers import TaskSerializer
+from .models import Task, Category
+from .serializers import TaskSerializer, CategorySerializer
 from django.shortcuts import get_object_or_404
 from datetime import date
 
@@ -31,6 +31,7 @@ class TaskListCreateView(generics.ListCreateAPIView):
 class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
 
     def get_queryset(self):
         return Task.objects.filter(owner=self.request.user)
@@ -43,7 +44,16 @@ class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         return super().update(request, *args, **kwargs)
+    
+class CategoryListCreateView(generics.ListCreateAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        return Category.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
@@ -52,3 +62,4 @@ def complete_task(request, pk):
     task.status = not task.status
     task.save()
     return Response(TaskSerializer(task).data)
+
