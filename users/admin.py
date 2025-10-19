@@ -1,13 +1,23 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from django.utils.translation import gettext_lazy as _
+from .models import User
 
-@admin.register(CustomUser)
+@admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    model = CustomUser
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_active')
-    search_fields = ('username', 'email')
-    ordering = ('id',)
-   
-
+    list_display = ("username", "email", "is_active", "is_staff", "date_joined")
+    list_filter = ("is_staff", "is_active", "date_joined")
+    search_fields = ("username", "email")
+    fieldsets = (
+        (None, {"fields": ("username", "email", "password")}),
+        (_("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("username", "email", "password1", "password2", "is_staff", "is_active"),
+        }),
+    )
+    ordering = ("-date_joined",)
+    readonly_fields = ("date_joined", "last_login")
