@@ -27,7 +27,11 @@ class RegisterView(generics.CreateAPIView):
                 "username": user.username,
                 "email": user.email
             },
-             }, status=status.HTTP_201_CREATED)
+            "tokens": {
+                "refresh": str(refresh),
+                "access": access_token
+            }
+        }, status=status.HTTP_201_CREATED)
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):

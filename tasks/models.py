@@ -28,7 +28,11 @@ class Task(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Medium')
     due_date = models.DateField(null=True, blank=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='tasks'
+    )
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks')
     completed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
