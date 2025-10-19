@@ -17,13 +17,20 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-
+from django.http import JsonResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls')),
+    path('api/auth/', include('users.urls')),
     path('api/tasks/', include('tasks.urls')),
 ]
+
+def custom_404(request, exception):
+    return JsonResponse({
+        "error": "The requested endpoint does not exist. Please check the URL."
+    }, status=404)
+
+handler404 = custom_404
 
 
 
