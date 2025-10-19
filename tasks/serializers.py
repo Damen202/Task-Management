@@ -14,6 +14,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
+        read_only_fields = ['id']
 
 class TaskSerializer(serializers.ModelSerializer):
     owner = UserSimpleSerializer(read_only=True)

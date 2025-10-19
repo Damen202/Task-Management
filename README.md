@@ -52,3 +52,73 @@ A RESTful API for managing personal or team tasks, built with Django and Django 
 | `GET/PUT/DELETE` | `/api/tasks/<id>/`          | View, edit, or delete a task |
 | `PATCH`          | `/api/tasks/<id>/complete/` | Toggle task completion       |
 | `GET/POST`       | `/api/tasks/categories/`    | Manage categories            |
+
+
+# Live Demo on Task management APi
+
+ # Register a new user
+ # Endpoint
+ POST /api/auth/register/
+    {
+    "username": "damen",
+    "email": "damen@example.com",
+    "first_name": "Damen",
+    "last_name": "Ola",
+    "password": "Testpass123!",
+    "password_confirm": "Testpass123!"
+}
+
+# Login (Obtain JWT Token)
+# Endpoint
+  POST /api/auth/login/
+  {
+    "username": "damen",
+    "password": "Testpass123!"
+}
+
+# Create a Category
+# Endpoint
+ POST /api/tasks/categories/
+ {
+    "name": "Work"
+}
+
+# Create a Task
+# Endpoint
+ POST /api/tasks/
+ {
+    "title": "Finish project documentation",
+    "description": "Complete the README and submit by Friday.",
+    "priority": "High",
+    "status": "pending",
+    "due_date": "2025-10-25",
+    "category": 1
+}
+
+# Update a Task
+# Endpoint
+ PUT /api/tasks/5/
+ {
+    "title": "Finish project documentation",
+    "description": "Update and review with mentor.",
+    "priority": "Medium",
+    "status": "completed",
+    "due_date": "2025-10-25"
+}
+
+# List Tasks (Filter)
+# Endpoint
+ GET /api/tasks/?status=completed or GET /api/tasks/?due_date=today
+ [
+    {
+        "id": 5,
+        "title": "Finish project documentation",
+        "status": "completed",
+        "priority": "High",
+        "due_date": "2025-10-25"
+    }
+]
+
+# Delete a Task
+# Endpoint
+DELETE /api/tasks/5/
